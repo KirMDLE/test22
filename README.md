@@ -22,4 +22,7 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+<<<<<<< HEAD
 # test1
+=======
+>>>>>>> adb41fc (initial commit)

@@ -37,13 +37,20 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return {'message':  "Пользователь успешно зарегистрирован", "user_id": new_user.id}
 
 
-@router.post('/login')
+@router.post('/login', response_model=schemas.Token)
 def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
-    if not db_user or db_user.password != user.password:
+    if not db_user or not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Неверный email или пароль")
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": db_user.email},
+        expires_delta=access_token_expires
+    )
+
     return {
         "message": "Вход успешен",
-        "user_id": db_user.id,
-        "role": db_user.role
-    }
+        "access_token": access_token, 
+        "token_type": "bearer"
+        }

@@ -5,6 +5,17 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 import enum
 
+
+###схемы для логина и токена
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+ ###роль клиента  
 class UserRole(str, enum.Enum):
     client = "client"
     master = "master"
