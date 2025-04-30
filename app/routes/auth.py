@@ -1,9 +1,11 @@
 ###(регистрация и авторизация)
 
+from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import models, schemas
+from app.security import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, create_refresh_toket, verify_password
 
 
 router =APIRouter(prefix='/auth', tags=['auth'])
@@ -43,6 +45,7 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     if not db_user or not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Неверный email или пароль")
 
+    refresh_token = create_refresh_toket(data={"sub": db_user.email})
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": db_user.email},
@@ -52,5 +55,6 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     return {
         "message": "Вход успешен",
         "access_token": access_token, 
+        "refresh_token": refresh_token,
         "token_type": "bearer"
         }
