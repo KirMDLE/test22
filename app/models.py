@@ -1,4 +1,5 @@
 ###(модели пользователей, мастеров и заказов)
+###SQLAlchemy — это, пожалуй, самая популярная библиотека для работы с базами данных в Python, реализующая паттерн ORM (Object Relational Mapping). ORM позволяет описывать таблицы базы данных в виде классов Python, что значительно упрощает взаимодействие с данными в приложении.
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, Enum
 from sqlalchemy.orm import relationship
@@ -16,7 +17,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
-    password = Column(String)
+    hashed_password = Column(String)
     role = Column(Enum(UserRole), nullable=False)
 
     master_profile = relationship("MasterProfile", back_populates="user", uselist=False)

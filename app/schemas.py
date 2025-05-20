@@ -1,7 +1,7 @@
 ###(Pydantic-схемы для валидации запросов)
 
 import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional
 import enum
 
@@ -31,6 +31,7 @@ class UserLogin(BaseModel):
     password: str    
 
 class MasterProfileCreate(BaseModel):
+    user_id : int
     specialization: str
     description: Optional[str] = None
 
@@ -45,8 +46,7 @@ class UserRead(BaseModel):
     name: str              
     email: EmailStr        
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MasterProfileRead(BaseModel):
@@ -56,8 +56,7 @@ class MasterProfileRead(BaseModel):
     description: Optional[str]  
     user: UserRead          
 
-    class Config:
-        orm_mode = True   
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrderRead(BaseModel):
@@ -68,5 +67,4 @@ class OrderRead(BaseModel):
     master_id: int       
     created_at: datetime.datetime  
 
-    class Config:
-        orm_mode = True           
+    model_config = ConfigDict(from_attributes=True)

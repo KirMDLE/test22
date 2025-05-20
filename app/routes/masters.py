@@ -16,6 +16,12 @@ def get_db():
     finally:
         db.close()
 
+@router.get("/")
+def get_all_masters(db: Session = Depends(get_db)):
+    masters = db.query(models.MasterProfile).all()
+    return masters
+
+
 
 @router.post('/create_profile')
 def create_master_profile(profile: schemas.MasterProfileCreate, db: Session = Depends(get_db)):

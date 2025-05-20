@@ -5,10 +5,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import models, schemas
-from app.security import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, create_refresh_toket, verify_password
+from app.security import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, create_refresh_toket, get_password_hash, verify_password
+from app.dependencies import get_db
 
 
-router =APIRouter(prefix='/auth', tags=['auth'])
+router = APIRouter()
 
 
 def get_db():
@@ -28,7 +29,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     new_user = models.User(
         name=user.name,
         email=user.email,
-        password = user.password,
+        hashed_password=get_password_hash(user.password),        
         role = user.role
     )
 

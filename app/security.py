@@ -5,10 +5,11 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from requests import Session
+from app.dependencies import get_db
 
 from app import models
 from app.models import User
-from app.routes.auth import get_db
+
 
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
@@ -19,10 +20,9 @@ oauth_scheme = OAuth2PasswordBearer(tokenUrl='/login')
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def get_current_user(
-    token: str = Depends(oauth_scheme),
-    db: Session = Depends(get_db)
-):
+def get_current_user(token: str = Depends(oauth_scheme), db: Session = Depends(None)):
+    from app.routes.auth import get_db  # отложенный импорт
+    db = get_db()
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])# Декодируем токен
         user_id: int = payload.get("sub")# JWT-токен содержит `sub` (subject) — имя пользователя
